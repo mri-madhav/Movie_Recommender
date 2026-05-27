@@ -23,6 +23,7 @@ So far, the project includes:
 - A matrix factorization recommender using TruncatedSVD on the user-item matrix
 - A holdout evaluation pipeline using Precision@10 and Hit Rate@10
 - A main application entry point that prints baseline, user-user, item-item, content-based, and matrix factorization recommendations for a sample user
+- A Streamlit UI for interactive user selection and recommendation comparison
 
 ## Current Recommendation Flow
 
@@ -62,6 +63,7 @@ Movie_Recommendation_System/
     evaluation.py
     matrix_factorization.py
     preprocess.py
+    streamlit_app.py
   DATASET_GUIDE.md
   QUICK_DOWNLOAD_GUIDE.md
   setup_dataset.py
@@ -78,6 +80,7 @@ Movie_Recommendation_System/
 - `src/matrix_factorization.py`: builds latent-factor recommendations using TruncatedSVD
 - `src/evaluation.py`: contains evaluation metrics and model comparison logic
 - `src/app.py`: main script that ties the pipeline together
+- `src/streamlit_app.py`: interactive demo interface built with Streamlit
 - `setup_dataset.py`: helper script for dataset download and setup
 
 ## Getting Started
@@ -101,10 +104,15 @@ data/raw/ml-latest-small/
 python -m src.app
 ```
 
+5. Run the Streamlit UI:
+
+```bash
+streamlit run src/streamlit_app.py
+```
+
 ## Next Steps
 
 The next planned improvements are:
 
 - Add evaluation metrics across all models
-- Optionally build a small Streamlit interface
 - Improve hyperparameter tuning and recommendation quality
