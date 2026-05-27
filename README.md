@@ -1,6 +1,6 @@
 # Movie Recommendation System
 
-This project is a modular recommendation system built for resume and interview presentation. It is designed to compare multiple recommendation approaches on the MovieLens dataset:
+This project is a modular recommendation system built. It is designed to compare multiple recommendation approaches on the MovieLens dataset:
 
 - User-user collaborative filtering
 - Item-item collaborative filtering
