@@ -1,6 +1,6 @@
 # Movie Recommendation System
 
-This project is a modular recommendation system built. It is designed to compare multiple recommendation approaches on the MovieLens dataset:
+This project is a modular recommendation system designed to compare multiple recommendation approaches on the MovieLens dataset:
 
 - User-user collaborative filtering
 - Item-item collaborative filtering
@@ -20,7 +20,9 @@ So far, the project includes:
 - A user-user collaborative filtering recommender using cosine similarity
 - An item-item collaborative filtering recommender using cosine similarity between movies
 - A content-based recommender using genres, title metadata, and optional user tags
-- A main application entry point that prints baseline, user-user, item-item, and content-based recommendations for a sample user
+- A matrix factorization recommender using TruncatedSVD on the user-item matrix
+- A holdout evaluation pipeline using Precision@10 and Hit Rate@10
+- A main application entry point that prints baseline, user-user, item-item, content-based, and matrix factorization recommendations for a sample user
 
 ## Current Recommendation Flow
 
@@ -33,13 +35,15 @@ The current version of the system works like this:
 5. Predict scores for unseen movies using weighted ratings from similar users
 6. For item-item filtering, score unseen movies based on similarity to movies the user already rated
 7. For content-based filtering, recommend movies similar to the metadata of movies the user rated highly
-8. Return top movie recommendations
+8. For matrix factorization, decompose the sparse user-item matrix into latent factors and reconstruct predicted ratings
+9. Evaluate recommenders on a holdout split using ranking metrics
+10. Return top movie recommendations and comparison metrics
 
 ## Interview Explanation
 
 You can explain the current implementation like this:
 
-> I structured the project in a modular way so data loading, preprocessing, recommendation algorithms, and evaluation are separated. I first implemented a popularity baseline, then built user-user and item-item collaborative filtering models using a user-item rating matrix and cosine similarity. I also added a content-based recommender that uses genres, title text, and tags to represent each movie, then recommends movies similar to the ones a user has already rated highly.
+> I structured the project in a modular way so data loading, preprocessing, recommendation algorithms, and evaluation are separated. I first implemented a popularity baseline, then built user-user and item-item collaborative filtering models using a user-item rating matrix and cosine similarity. I also added a content-based recommender that uses genres, title text, and tags to represent each movie, and a matrix factorization model using TruncatedSVD to learn latent user-item preference patterns. To compare them fairly, I added a holdout evaluation pipeline using ranking metrics such as Precision@10 and Hit Rate@10.
 
 ## Project Structure
 
@@ -71,8 +75,8 @@ Movie_Recommendation_System/
 - `src/preprocess.py`: creates the user-item matrix and popularity baseline
 - `src/collaborative.py`: contains collaborative filtering logic
 - `src/content_based.py`: builds metadata-based movie similarity and content-based recommendations
-- `src/matrix_factorization.py`: contains matrix factorization logic
-- `src/evaluation.py`: contains evaluation metrics such as RMSE and MAE
+- `src/matrix_factorization.py`: builds latent-factor recommendations using TruncatedSVD
+- `src/evaluation.py`: contains evaluation metrics and model comparison logic
 - `src/app.py`: main script that ties the pipeline together
 - `setup_dataset.py`: helper script for dataset download and setup
 
@@ -101,6 +105,6 @@ python -m src.app
 
 The next planned improvements are:
 
-- Add matrix factorization comparison
 - Add evaluation metrics across all models
 - Optionally build a small Streamlit interface
+- Improve hyperparameter tuning and recommendation quality

@@ -7,6 +7,9 @@ from src.collaborative import (
     recommend_items_for_user,
 )
 from src.content_based import build_content_similarity, recommend_content_for_user
+from src.evaluation import evaluate_recommenders
+from src.matrix_factorization import recommend_matrix_factorization
+from sklearn.model_selection import train_test_split
 
 
 def main() -> None:
@@ -54,6 +57,24 @@ def main() -> None:
         top_n=10,
         min_rating=4.0,
     )
+    matrix_factorization_recommendations = recommend_matrix_factorization(
+        user_id=sample_user_id,
+        user_item_matrix=user_item_matrix,
+        movies=movies,
+        top_n=10,
+        n_components=20,
+    )
+    train_ratings, test_ratings = train_test_split(ratings, test_size=0.2, random_state=42)
+    evaluation_results = evaluate_recommenders(
+        train_ratings=train_ratings,
+        test_ratings=test_ratings,
+        movies=movies,
+        tags=tags,
+        k=10,
+        min_relevant_rating=4.0,
+        max_users=150,
+        random_state=42,
+    )
 
     print("Ratings shape:", ratings.shape)
     print("Movies shape:", movies.shape)
@@ -66,6 +87,10 @@ def main() -> None:
     print(item_item_recommendations.to_string(index=False))
     print(f"\nTop 10 content-based recommendations for user {sample_user_id}:")
     print(content_recommendations.to_string(index=False))
+    print(f"\nTop 10 matrix factorization recommendations for user {sample_user_id}:")
+    print(matrix_factorization_recommendations.to_string(index=False))
+    print("\nEvaluation summary (holdout split):")
+    print(evaluation_results.to_string(index=False))
 
 
 if __name__ == "__main__":
