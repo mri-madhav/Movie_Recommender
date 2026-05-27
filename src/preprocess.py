@@ -22,3 +22,8 @@ def get_top_movies(ratings: pd.DataFrame, min_ratings: int = 50) -> pd.DataFrame
         by=["avg_rating", "rating_count"],
         ascending=[False, False],
     )
+
+
+def attach_movie_titles(summary: pd.DataFrame, movies: pd.DataFrame) -> pd.DataFrame:
+    """Attach movie titles to recommendation output."""
+    return summary.merge(movies[["movieId", "title"]], on="movieId", how="left")

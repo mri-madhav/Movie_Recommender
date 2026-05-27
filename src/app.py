@@ -1,5 +1,11 @@
-from data_loader import MovieLensDataLoader
-from preprocess import build_user_item_matrix, get_top_movies
+from src.data_loader import MovieLensDataLoader
+from src.preprocess import attach_movie_titles, build_user_item_matrix, get_top_movies
+from src.collaborative import (
+    compute_item_similarity,
+    compute_user_similarity,
+    recommend_for_user,
+    recommend_items_for_user,
+)
 
 
 def main() -> None:
@@ -13,13 +19,36 @@ def main() -> None:
         return
 
     user_item_matrix = build_user_item_matrix(ratings)
-    top_movies = get_top_movies(ratings)
+    top_movies = attach_movie_titles(get_top_movies(ratings), movies)
+    user_similarity = compute_user_similarity(user_item_matrix)
+    item_similarity = compute_item_similarity(user_item_matrix)
+    sample_user_id = int(ratings["userId"].iloc[0])
+    user_user_recommendations = recommend_for_user(
+        user_id=sample_user_id,
+        user_item_matrix=user_item_matrix,
+        user_similarity=user_similarity,
+        movies=movies,
+        top_n=10,
+        neighbor_count=5,
+    )
+    item_item_recommendations = recommend_items_for_user(
+        user_id=sample_user_id,
+        user_item_matrix=user_item_matrix,
+        item_similarity=item_similarity,
+        movies=movies,
+        top_n=10,
+        similar_item_count=10,
+    )
 
     print("Ratings shape:", ratings.shape)
     print("Movies shape:", movies.shape)
     print("User-item matrix shape:", user_item_matrix.shape)
     print("\nTop 10 popular movies:")
-    print(top_movies.head(10).to_string(index=False))
+    print(top_movies[["movieId", "title", "avg_rating", "rating_count"]].head(10).to_string(index=False))
+    print(f"\nTop 10 user-user recommendations for user {sample_user_id}:")
+    print(user_user_recommendations.to_string(index=False))
+    print(f"\nTop 10 item-item recommendations for user {sample_user_id}:")
+    print(item_item_recommendations.to_string(index=False))
 
 
 if __name__ == "__main__":
