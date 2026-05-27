@@ -17,6 +17,10 @@ class MovieLensDataLoader:
         movies_path = self.dataset_dir / "movies.csv"
         return pd.read_csv(movies_path)
 
+    def load_tags(self) -> pd.DataFrame:
+        tags_path = self.dataset_dir / "tags.csv"
+        return pd.read_csv(tags_path)
+
     def load_merged(self) -> pd.DataFrame:
         ratings = self.load_ratings()
         movies = self.load_movies()

@@ -6,6 +6,7 @@ from src.collaborative import (
     recommend_for_user,
     recommend_items_for_user,
 )
+from src.content_based import build_content_similarity, recommend_content_for_user
 
 
 def main() -> None:
@@ -18,10 +19,16 @@ def main() -> None:
         print("Dataset not found. Put MovieLens files in data/raw/ml-latest-small/.")
         return
 
+    try:
+        tags = loader.load_tags()
+    except FileNotFoundError:
+        tags = None
+
     user_item_matrix = build_user_item_matrix(ratings)
     top_movies = attach_movie_titles(get_top_movies(ratings), movies)
     user_similarity = compute_user_similarity(user_item_matrix)
     item_similarity = compute_item_similarity(user_item_matrix)
+    content_similarity = build_content_similarity(movies, tags)
     sample_user_id = int(ratings["userId"].iloc[0])
     user_user_recommendations = recommend_for_user(
         user_id=sample_user_id,
@@ -39,6 +46,14 @@ def main() -> None:
         top_n=10,
         similar_item_count=10,
     )
+    content_recommendations = recommend_content_for_user(
+        user_id=sample_user_id,
+        ratings=ratings,
+        movies=movies,
+        content_similarity=content_similarity,
+        top_n=10,
+        min_rating=4.0,
+    )
 
     print("Ratings shape:", ratings.shape)
     print("Movies shape:", movies.shape)
@@ -49,6 +64,8 @@ def main() -> None:
     print(user_user_recommendations.to_string(index=False))
     print(f"\nTop 10 item-item recommendations for user {sample_user_id}:")
     print(item_item_recommendations.to_string(index=False))
+    print(f"\nTop 10 content-based recommendations for user {sample_user_id}:")
+    print(content_recommendations.to_string(index=False))
 
 
 if __name__ == "__main__":
