@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+
+.venv/
+venv/
+
+data/raw/*.zip
+data/raw/*.csv
+data/raw/*.pkl
+data/raw/ml-latest-small/
+data/processed/*.csv
+
+.streamlit/

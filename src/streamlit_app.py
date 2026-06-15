@@ -23,14 +23,14 @@ from src.matrix_factorization import recommend_matrix_factorization  # noqa: E40
 from src.preprocess import attach_movie_titles, build_user_item_matrix, get_top_movies  # noqa: E402
 
 
-st.set_page_config(page_title="Movie Recommendation System", page_icon="🎬", layout="wide")
+st.set_page_config(page_title="Movie Recommendation System", layout="wide")
 
 METHOD_DESCRIPTIONS = {
-    "Popularity": "Ranks globally popular movies by average rating with a minimum rating-count filter.",
-    "User-User CF": "Finds similar users and predicts unseen movie ratings from their weighted preferences.",
-    "Item-Item CF": "Scores unseen movies using similarity to movies the user has already rated.",
-    "Content-Based": "Uses movie metadata (genres, title terms, tags) to find movies close to user's liked items.",
-    "Matrix Factorization": "Learns latent user-item factors from the sparse rating matrix and reconstructs scores.",
+    "Popularity": "Popular high-rated movies.",
+    "User-User CF": "Recommendations from similar users.",
+    "Item-Item CF": "Movies similar to what the user rated.",
+    "Content-Based": "Movies matched by genres, titles, and tags.",
+    "Matrix Factorization": "Recommendations from latent rating patterns.",
 }
 
 
@@ -135,7 +135,7 @@ def _display_recommendation_cards(frame: pd.DataFrame) -> None:
 
 def main() -> None:
     st.title("Movie Recommendation System")
-    st.caption("Interactive dashboard to compare recommendation methods on MovieLens.")
+    st.caption("Compare recommendation methods on MovieLens.")
 
     try:
         ratings, movies, tags = load_data()
@@ -145,7 +145,7 @@ def main() -> None:
 
     artifacts = build_artifacts(ratings, movies, tags)
 
-    st.sidebar.header("Control Panel")
+    st.sidebar.header("Controls")
     user_ids = sorted(ratings["userId"].unique().tolist())
     selected_user = st.sidebar.selectbox("Select user ID", user_ids, index=0)
     top_n = st.sidebar.slider("Recommendations per method", min_value=5, max_value=20, value=10, step=1)
@@ -296,17 +296,7 @@ def main() -> None:
                 .set_index("Model")
             )
             st.bar_chart(chart_df)
-        st.caption("Evaluation uses a holdout split and a reproducible sample of 150 users for speed.")
-
-    st.subheader("How this helps in interviews")
-    st.markdown(
-        """
-        - `User-user collaborative filtering` recommends movies from similar users.
-        - `Item-item collaborative filtering` recommends movies similar to items a user already liked.
-        - `Content-based filtering` recommends by metadata such as genres, title terms, and tags.
-        - `Matrix factorization` learns latent patterns from the sparse rating matrix.
-        """
-    )
+        st.caption("Evaluation uses a holdout split and a sample of 150 users.")
 
 
 if __name__ == "__main__":
